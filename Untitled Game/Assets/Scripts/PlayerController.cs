@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour {
     [Range(0.0f, float.MaxValue)]
     [Tooltip("Movement speed in units per second")]
     public float movementSpeed = 2.0f;
+    
+    private Vector3 gravity;
 
     private void Start() {
         // Check if a camera is referenced.
@@ -19,6 +21,8 @@ public class PlayerController : MonoBehaviour {
             Debug.Log("Error: no main camera set for PlayerController", this);
             Application.Quit();
         }
+
+        this.gravity = Vector3.down;
     }
 
     private void Update() {
@@ -36,10 +40,37 @@ public class PlayerController : MonoBehaviour {
         // Get the player's movement vector.
         Vector3 movement = this.GetMovement(playerRight, playerUp, playerForward);
 
+        // Move the player.
         Rigidbody rb = this.GetComponent<Rigidbody>();
         rb.MovePosition(rb.position + movement);
 
-        this.mainCamera.transform.Rotate(0, 0.3f, 0);
+        // Let gravity affect the player.
+        rb.AddForce(this.gravity * rb.mass, ForceMode.Force);
+
+        if (Input.GetKey(KeyCode.Keypad7)) {
+            this.gravity = Vector3.down;
+        }
+        else if (Input.GetKey(KeyCode.Keypad9)) {
+            this.gravity = Vector3.up;
+        }
+        else if (Input.GetKey(KeyCode.Keypad8)) {
+            this.gravity = Vector3.forward;
+        }
+        else if (Input.GetKey(KeyCode.Keypad5)) {
+            this.gravity = Vector3.back;
+        }
+        else if (Input.GetKey(KeyCode.Keypad4)) {
+            this.gravity = Vector3.left;
+        }
+        else if (Input.GetKey(KeyCode.Keypad6)) {
+            this.gravity = Vector3.right;
+        }
+        else if (Input.GetKey(KeyCode.Keypad2)) {
+            this.gravity = new Vector3(0.0f, -2.0f, -1.0f).normalized;
+        }
+        else if (Input.GetKey(KeyCode.Keypad0)) {
+            this.gravity = Random.onUnitSphere;
+        }
     }
 
     /// <summary>
