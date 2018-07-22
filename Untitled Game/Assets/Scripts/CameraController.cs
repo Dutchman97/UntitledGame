@@ -6,9 +6,8 @@ public class CameraController : MonoBehaviour {
     [Tooltip("Object the camera will focus on")]
     public GameObject focusObject;
 
-    [Tooltip("Distance the camera will be from the object")]
-    [Range(0.0f, float.MaxValue)]
-    public float distanceToObject = 7.5f;
+    [Tooltip("Offset the camera will have relative to the object")]
+    public Vector3 relativeOffset = new Vector3(0.0f, 2.0f, -7.5f);
 
     [Tooltip("Mouse sensitivity")]
     public float mouseSensitivity = 5.0f;
@@ -17,17 +16,28 @@ public class CameraController : MonoBehaviour {
     public bool invertY = false;
 
     private void Update() {
+        // Get the mouse movement.
         Vector2 mouseMovement = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y") * (this.invertY ? 1 : -1));
         mouseMovement *= this.mouseSensitivity;
 
         if (this.focusObject != null) {
-            this.transform.Rotate(this.focusObject.transform.up, mouseMovement.x, Space.World);
-            this.transform.Rotate(this.transform.right, mouseMovement.y, Space.World);
-            //this.transform.Rotate(0.0f, mouseMovement.x, 0.0f, Space.Self);
-            //this.transform.Rotate(mouseMovement.y, 0.0f, 0.0f, Space.World);
+            PlayerController pc = this.focusObject.GetComponent<PlayerController>();
 
-            this.transform.position = this.focusObject.transform.position - this.transform.forward * this.distanceToObject;
-            this.transform.position += Vector3.up * 2.0f;
+            // Camera is currently only intended for the player's object.
+            if (pc == null) {
+                Debug.LogWarning("The focus object does not contain a PlayerController. The camera is currently only supported for following the player object.");
+                return;
+            }
+
+            // Adjust the camera's rotation.
+            this.transform.Rotate(Vector3.up, mouseMovement.x, Space.World);
+            this.transform.Rotate(this.transform.right, mouseMovement.y, Space.World);
+
+            // Calculate the offset in world space.
+            Vector3 offset = this.transform.rotation * this.relativeOffset;
+            
+            // Set the camera's position to the focus object offset by a vector.
+            this.transform.position = this.focusObject.transform.position + offset;
         }
     }
 }
