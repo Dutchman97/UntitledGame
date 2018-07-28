@@ -15,10 +15,17 @@ public class CameraController : MonoBehaviour {
     [Tooltip("Invert Y-axis rotation")]
     public bool invertY = false;
 
+    [Tooltip("Determine whether the rotation around the x-axis should be clamped or not")]
+    public bool clampXRotation = true;
+
+    private Vector2 mouseMovement = Vector2.zero;
+
     private void Update() {
         // Get the mouse movement.
-        Vector2 mouseMovement = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y") * (this.invertY ? 1 : -1));
-        mouseMovement *= this.mouseSensitivity;
+        this.mouseMovement += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y") * (this.invertY ? 1 : -1)) * this.mouseSensitivity;
+
+        // Clamp the total y-axis mouse movement.
+        this.mouseMovement.y = Mathf.Clamp(this.mouseMovement.y, -80.0f, 80.0f);
 
         if (this.focusObject != null) {
             PlayerController pc = this.focusObject.GetComponent<PlayerController>();
@@ -29,9 +36,10 @@ public class CameraController : MonoBehaviour {
                 return;
             }
 
-            // Adjust the camera's rotation.
-            this.transform.Rotate(Vector3.up, mouseMovement.x, Space.World);
-            this.transform.Rotate(this.transform.right, mouseMovement.y, Space.World);
+            // Set the camera's rotation.
+            this.transform.localRotation = Quaternion.identity;
+            this.transform.Rotate(Vector3.up, this.mouseMovement.x, Space.World);
+            this.transform.Rotate(this.transform.right, this.mouseMovement.y, Space.World);
 
             // Calculate the offset in world space.
             Vector3 offset = this.transform.rotation * this.relativeOffset;

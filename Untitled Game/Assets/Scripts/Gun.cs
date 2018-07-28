@@ -22,7 +22,7 @@ public class Gun : MonoBehaviour {
     }
 
     public void LookAt(Vector3 point) {
-        Vector3 lookDirection = point - this.boneTransform.position;
+        Vector3 lookDirection = (point - this.boneTransform.position).normalized;
         Vector3 right = Vector3.Cross(Vector3.up, lookDirection);
         Vector3 up = Vector3.Cross(lookDirection, right);
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection, up);
