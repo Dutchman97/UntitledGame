@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         //QualitySettings.vSyncCount = 0;
-        //Application.targetFrameRate = 5;
+        //Application.targetFrameRate = 10;
     }
 
     private void Update() {
@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour {
 
         // Calculate the movement rotation and set the legs' rotation to it.
         if (movement != Vector3.zero) {
-            Quaternion movementRotation = Quaternion.FromToRotation(Vector3.forward, movement);
+            Quaternion movementRotation = Quaternion.LookRotation(movement, Vector3.up);
             this.legs.SetRotation(movementRotation);
         }
 
@@ -60,16 +60,13 @@ public class PlayerController : MonoBehaviour {
             this.rightGun.LookAt(cameraFocusPoint);
         }
         else {
-            Quaternion lookRotation = this.mainCamera.transform.rotation; //Quaternion.FromToRotation(Vector3.forward, this.mainCamera.transform.forward);
+            Quaternion lookRotation = this.mainCamera.transform.rotation;
             this.leftGun.SetRotation(lookRotation);
             this.rightGun.SetRotation(lookRotation);
         }
 
-        // Calculate the camera rotation and sets the base's rotation to (a modification of) it.
-        Quaternion baseRotation = this.mainCamera.transform.rotation;
-        Vector3 baseRotationEuler = baseRotation.eulerAngles;
-        Quaternion baseRotation1 = Quaternion.AngleAxis(baseRotationEuler.y, Vector3.up) * Quaternion.AngleAxis(baseRotationEuler.x, Vector3.right) * Quaternion.AngleAxis(baseRotationEuler.z, Vector3.forward);
-        this.@base.SetRotation(baseRotation1);
+        // Make the base look in the same direction as the camera.
+        this.@base.LookTowardCameraDirection(this.mainCamera.transform);
     }
 
     /// <summary>
@@ -94,16 +91,5 @@ public class PlayerController : MonoBehaviour {
             movement += right;
         }
         return movement * this.movementSpeed * Time.deltaTime;
-    }
-
-    private void SetObjectRotation(Transform objectTransform, Quaternion rotation) {
-        // Set the player's rotation.
-        TargetRotation tr = objectTransform.GetComponent<TargetRotation>();
-        if (tr == null) {
-            objectTransform.transform.rotation = rotation;
-        }
-        else {
-            tr.SetTargetRotation(rotation);
-        }
     }
 }

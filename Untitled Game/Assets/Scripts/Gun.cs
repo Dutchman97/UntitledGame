@@ -14,7 +14,7 @@ public class Gun : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        this.boneTransform.rotation = Quaternion.Lerp(this.boneTransform.rotation, this.rotationTarget, this.rotationLerpSpeed * Time.fixedDeltaTime);
+        this.boneTransform.rotation = Quaternion.Slerp(this.boneTransform.rotation, this.rotationTarget, this.rotationLerpSpeed * Time.fixedDeltaTime);
     }
 
     public void SetRotation(Quaternion rotation) {
@@ -23,7 +23,9 @@ public class Gun : MonoBehaviour {
 
     public void LookAt(Vector3 point) {
         Vector3 lookDirection = point - this.boneTransform.position;
-        Quaternion lookRotation = Quaternion.FromToRotation(Vector3.forward, lookDirection);
+        Vector3 right = Vector3.Cross(Vector3.up, lookDirection);
+        Vector3 up = Vector3.Cross(lookDirection, right);
+        Quaternion lookRotation = Quaternion.LookRotation(lookDirection, up);
         this.SetRotation(lookRotation);
     }
 }
