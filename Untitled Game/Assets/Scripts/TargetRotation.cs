@@ -5,7 +5,7 @@ using UnityEngine;
 public class TargetRotation : MonoBehaviour {
     public float lerpSpeed = 3f;
 
-    public bool targetX = false, targetY = true, targetZ = false;
+    public bool targetX = true, targetY = true, targetZ = true;
 
     private Vector3 targetRotation;
 
@@ -19,9 +19,8 @@ public class TargetRotation : MonoBehaviour {
                 this.targetY ? this.targetRotation.y : this.transform.rotation.eulerAngles.y,
                 this.targetZ ? this.targetRotation.z : this.transform.rotation.eulerAngles.z
             );
-
-        // Does multiplying lerpSpeed by deltaTime work nicely?
-        this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(targetRotation), this.lerpSpeed * Time.deltaTime);
+        
+        this.transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.Euler(targetRotation), this.lerpSpeed * Time.fixedDeltaTime);
     }
 
     public void SetTargetRotation(Quaternion rot) {
