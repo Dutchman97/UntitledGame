@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
     [Header("Object References")]
     [Tooltip("Camera that will be used for determining movement direction")]
-    public Camera mainCamera;
+    public CameraController mainCamera;
     [Tooltip("The player's legs component")]
     public Legs legs;
     [Tooltip("The player's base component")]
@@ -51,7 +51,8 @@ public class PlayerController : MonoBehaviour {
 
         // Calculate the point the player should be aiming at if any such point exists.
         RaycastHit raycastHit;
-        bool raycastSuccess = Physics.Raycast(this.mainCamera.transform.position, this.mainCamera.transform.forward, out raycastHit);
+        int layerMask = ~(1 << LayerMask.NameToLayer("Player")); // Do not aim at the player.
+        bool raycastSuccess = Physics.Raycast(this.mainCamera.GetAimRay(), out raycastHit, float.MaxValue, layerMask);
 
         // Set the guns' rotation.
         if (raycastSuccess) {

@@ -51,8 +51,8 @@ public class CameraController : MonoBehaviour {
             float maxDistance = offset.magnitude;
             RaycastHit raycastHit;
             Ray ray = new Ray(objectPosition, position - objectPosition);
-            // Clipping through entities is allowed.
-            int layerMask = ~(1 << LayerMask.NameToLayer("Entities"));
+            // Clipping through entities and the player is allowed.
+            int layerMask = ~(1 << LayerMask.NameToLayer("Entities") | 1 << LayerMask.NameToLayer("Player"));
 
             // Check if something is in the way of the camera, and if so, move it.
             if (Physics.Raycast(ray, out raycastHit, maxDistance, layerMask)) {
@@ -62,5 +62,14 @@ public class CameraController : MonoBehaviour {
             // Set the camera's position to the focus object offset by a vector.
             this.transform.position = position;
         }
+    }
+
+    public Ray GetAimRay() {
+        Vector3 direction = this.transform.forward;
+        // The origin of the ray starts a bit forward.
+        // This is done so that the ray starts in the same z-plane (of the camera's coordinate system) as the focus object.
+        // If this would not be done, the aim ray can intersect with an object behind the focus object, which is not what we want.
+        Vector3 origin = this.transform.position + direction * -this.relativeOffset.z;
+        return new Ray(origin, direction);
     }
 }
