@@ -41,11 +41,26 @@ public class CameraController : MonoBehaviour {
             this.transform.Rotate(Vector3.up, this.mouseMovement.x, Space.World);
             this.transform.Rotate(this.transform.right, this.mouseMovement.y, Space.World);
 
-            // Calculate the offset in world space.
+            Vector3 objectPosition = this.focusObject.transform.position;
+
+            // Calculate the offset and position of the camera in world space.
             Vector3 offset = this.transform.rotation * this.relativeOffset;
-            
+            Vector3 position = objectPosition + offset;
+
+            // Raycast variables.
+            float maxDistance = offset.magnitude;
+            RaycastHit raycastHit;
+            Ray ray = new Ray(objectPosition, position - objectPosition);
+            // Clipping through entities is allowed.
+            int layerMask = ~(1 << LayerMask.NameToLayer("Entities"));
+
+            // Check if something is in the way of the camera, and if so, move it.
+            if (Physics.Raycast(ray, out raycastHit, maxDistance, layerMask)) {
+                position = ray.GetPoint(raycastHit.distance * 0.9f);
+            }
+
             // Set the camera's position to the focus object offset by a vector.
-            this.transform.position = this.focusObject.transform.position + offset;
+            this.transform.position = position;
         }
     }
 }
