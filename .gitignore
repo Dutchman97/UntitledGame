@@ -34,3 +34,8 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# Python
+__pycache__/
+*.py[cod]
+.idea/
