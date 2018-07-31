@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour {
         // Calculate the movement rotation and set the legs' rotation to it.
         if (movement != Vector3.zero) {
             Quaternion movementRotation = Quaternion.LookRotation(movement, Vector3.up);
-            this.legs.SetRotation(movementRotation);
+            this.legs.TargetRotation(movementRotation);
         }
 
         // Calculate the point the player should be aiming at if any such point exists.
@@ -62,8 +62,8 @@ public class PlayerController : MonoBehaviour {
         }
         else {
             Quaternion lookRotation = this.mainCamera.transform.rotation;
-            this.leftGun.SetRotation(lookRotation);
-            this.rightGun.SetRotation(lookRotation);
+            this.leftGun.TargetRotation(lookRotation);
+            this.rightGun.TargetRotation(lookRotation);
         }
 
         // Make the base look in the same direction as the camera.

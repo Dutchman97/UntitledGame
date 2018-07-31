@@ -2,25 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Base : MonoBehaviour {
-    public float rotationLerpSpeed = 3.0f;
-
+public class Base : Rotatable {
+    [Tooltip("The rotation around the x-axis will be scaled by this variable")]
     public float xAngleScale = 1.0f / 3.0f;
 
-    private Quaternion rotationOffset, rotationTarget;
-
-    private void Start() {
-        this.rotationTarget = this.rotationOffset = this.transform.rotation;
-    }
-
-    private void FixedUpdate() {
-        this.transform.rotation = Quaternion.Slerp(this.transform.rotation, this.rotationTarget, this.rotationLerpSpeed * Time.fixedDeltaTime);
-    }
-
-    public void SetRotation(Quaternion rotation) {
-        this.rotationTarget = rotation * this.rotationOffset;
-    }
-
+    /// <summary>
+    /// Make the base try to look toward the transform's direction.
+    /// "Try" because the rotation around the x-axis can be scaled.
+    /// </summary>
+    /// <param name="cameraTransform">The transform whose rotation the base should mimic.</param>
     public void LookTowardCameraDirection(Transform cameraTransform) {
         // Get the direction in which the player is looking.
         Vector3 lookDirection = cameraTransform.forward;
@@ -32,6 +22,12 @@ public class Base : MonoBehaviour {
 
         // Sets the base's rotation to the camera's rotation, with a scaled x-angle.
         Quaternion baseRotation = Quaternion.AngleAxis(lookAngleX * (1.0f - this.xAngleScale), cameraTransform.right) * cameraTransform.rotation;
-        this.SetRotation(baseRotation);
+        this.TargetRotation(baseRotation);
+    }
+
+    protected override Transform TransformToRotate {
+        get {
+            return this.transform;
+        }
     }
 }

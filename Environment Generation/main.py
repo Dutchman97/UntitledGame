@@ -4,17 +4,16 @@ from noise import Noise
 from generator import Generator
 
 shape = (256, 256)
-image = Noise.white_thresholded(shape, 0.9)
+image = Noise.white(shape)
 
 
-kernel = cv2.getStructuringElement(cv2.MORPH_CROSS, (3,3))
-#kernel = np.array([[1,0,1],[0,1,0],[1,0,1]], dtype=np.uint8)
-a = 2
-image1 = cv2.dilate(image, kernel, iterations=a)
-b = 1
-image = cv2.erode(image1, kernel, iterations=a+b)
-image1 = cv2.dilate(image, kernel, iterations=b)
-image = image1
+# kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
+# a = 2
+# image1 = cv2.dilate(image, kernel, iterations=a)
+# b = 1
+# image = cv2.erode(image1, kernel, iterations=a+b)
+# image1 = cv2.dilate(image, kernel, iterations=b)
+# image = image1
 
 resized_shape = tuple((x*3 for x in shape))
 resized = cv2.resize(image, resized_shape, interpolation=cv2.INTER_NEAREST)
@@ -28,7 +27,7 @@ image2 = cv2.resize(image2, resized_shape, interpolation=cv2.INTER_NEAREST)
 cv2.imshow('image2', image2)
 
 g = Generator()
-generated = g.generate(shape, image2)
+generated = g.generate(shape, image)
 generated = cv2.resize(generated, resized_shape, interpolation=cv2.INTER_NEAREST)
 
 cv2.imshow('generated', generated)

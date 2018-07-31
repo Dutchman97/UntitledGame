@@ -4,7 +4,7 @@ class Generator:
     def __init__(self):
         # up, right, down, left
         self.direction_vectors = [(0,-1),(1,0),(0,1),(-1,0)]
-        self.forward_steps = 2
+        self.forward_steps = 3
 
     def generate(self, shape, chance_array):
         values = np.zeros(shape, dtype=np.float32)
@@ -44,10 +44,10 @@ class Generator:
 
         values[position[1]][position[0]] = 1
 
-        chance = chance_array[position[1]][position[0]]
+        chance = chance_array[position[1]][position[0]] / 3 + 0.2
         print('chance:', chance)
 
-        a = 0.3
+        a = 0.8
         if chance * a > np.random.rand():
             direction_left = (direction + 1) % 4
             direction_vector_left = self.direction_vectors[direction_left]

@@ -29,4 +29,15 @@ public class NoiseGenerator : MonoBehaviour {
 
         meshRenderer.material.mainTexture = texture;
     }
+
+    private float[,] WhiteNoise(int width, int height) {
+        float[,] result = new float[height, width];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                result[y, x] = Random.value;
+            }
+        }
+        return result;
+    }
 }
